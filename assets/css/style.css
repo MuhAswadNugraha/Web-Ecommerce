@@ -1,0 +1,20 @@
+.menu {
+	position: relative;
+	display: inline-block;
+}
+.menu::after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 2px;
+	width: 100%;
+	background: #fff;
+	transform: scaleX(0);
+	transform-origin: bottom right;
+	transition: transform 0.3s ease;
+}
+.menu:hover::after {
+	transform: scaleX(1);
+	transform-origin: bottom left;
+}
