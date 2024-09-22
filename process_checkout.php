@@ -2,55 +2,48 @@
 session_start();
 include 'includes/database.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Ambil dan sanitasi informasi dari formulir
-    $name = trim($_POST['name']);
-    $email = trim($_POST['email']);
-    $address = trim($_POST['address']);
-    $phone = trim($_POST['phone']);
-
-    // Validasi input
-    if (empty($name) || empty($email) || empty($address) || empty($phone)) {
-        header("Location: error.php?message=Semua field harus diisi");
-        exit;
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Pastikan ada keranjang
+    if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
+        die("Cart is empty. Please add items to your cart before proceeding to checkout.");
     }
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        header("Location: error.php?message=Email tidak valid");
-        exit;
-    }
+    // Ambil data dari form
+    $name = $_POST['name'];
+    $address = $_POST['address'];
+    $phone = $_POST['phone'];
+    $email = $_POST['email'];
 
-    // Simpan informasi pesanan ke database
-    try {
-        // Misalnya, ada tabel orders untuk menyimpan pesanan
-        $stmt = $pdo->prepare("INSERT INTO orders (name, email, address, phone) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$name, $email, $address, $phone]);
+    // Buat order baru di database
+    $stmt = $pdo->prepare("INSERT INTO orders (user_id, created_at) VALUES (?, NOW())");
+    $stmt->execute([$_SESSION['user_id']]);
+    $order_id = $pdo->lastInsertId();
 
-        // Ambil ID pesanan yang baru saja dimasukkan
-        $order_id = $pdo->lastInsertId();
+    // Ambil item keranjang
+    $cart_items = $_SESSION['cart'];
+    $total_price = 0;
 
-        // Simpan detail pesanan (produk dan jumlah) ke tabel order_items
-        if (!empty($_SESSION['cart'])) {
+    // Ambil detail produk dari database berdasarkan product_id
+    foreach ($cart_items as $product_id => $quantity) {
+        $stmt = $pdo->prepare("SELECT price FROM products WHERE id = ?");
+        $stmt->execute([$product_id]);
+        $product = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($product) {
+            // Tambahkan item ke order_items
             $stmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, quantity) VALUES (?, ?, ?)");
-            foreach ($_SESSION['cart'] as $product_id => $quantity) {
-                if ($quantity > 0) { // Pastikan quantity valid
-                    $stmt->execute([$order_id, $product_id, $quantity]);
-                }
-            }
+            $stmt->execute([$order_id, $product_id, $quantity]);
+
+            // Hitung total harga
+            $total_price += $product['price'] * $quantity;
         }
-
-        // Kosongkan keranjang setelah pesanan berhasil
-        unset($_SESSION['cart']);
-
-        // Redirect ke halaman sukses
-        header("Location: order_success.php?id=$order_id");
-        exit;
-    } catch (PDOException $e) {
-        error_log('Failed to process checkout: ' . $e->getMessage());
-        header("Location: error.php?message=Terjadi kesalahan saat memproses pesanan");
-        exit;
     }
-} else {
-    header("Location: index.php"); // Redirect jika bukan request POST
+
+    // Simpan informasi pesanan di session untuk pembayaran
+    $_SESSION['order_id'] = $order_id;
+    $_SESSION['total_price'] = $total_price;
+
+    // Redirect ke halaman pembayaran
+    header("Location: payment.php");
     exit;
 }

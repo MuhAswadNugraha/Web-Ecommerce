@@ -1,19 +1,31 @@
-// payment.php
 <?php
 session_start();
-include 'includes/database.php';
 
-// Pastikan pesanan ada dan sudah dibuat sebelumnya
-if (!isset($_SESSION['order_id'])) {
-    header("Location: index.php");
-    exit;
+// Pastikan total harga dan item keranjang sudah ada di session
+if (!isset($_SESSION['total_price']) || !isset($_SESSION['cart'])) {
+    die("Tidak ada pesanan yang ditemukan. Silakan kembali ke keranjang.");
 }
 
-// Ambil informasi pesanan berdasarkan ID
-$order_id = $_SESSION['order_id'];
-$stmt = $pdo->prepare("SELECT * FROM orders WHERE id = ?");
-$stmt->execute([$order_id]);
-$order = $stmt->fetch(PDO::FETCH_ASSOC);
+// Ambil detail produk dari keranjang
+include 'includes/database.php';
+$cart_items = [];
+if (!empty($_SESSION['cart'])) {
+    $placeholders = implode(',', array_fill(0, count($_SESSION['cart']), '?'));
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE id IN ($placeholders)");
+    $stmt->execute(array_keys($_SESSION['cart']));
+    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($products as $product) {
+        if (isset($_SESSION['cart'][$product['id']])) {
+            $cart_items[] = [
+                'product' => $product,
+                'quantity' => $_SESSION['cart'][$product['id']]
+            ];
+        }
+    }
+}
+
+$total_price = $_SESSION['total_price']; // Total harga diambil dari session
 ?>
 
 <!DOCTYPE html>
@@ -23,23 +35,33 @@ $order = $stmt->fetch(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pembayaran</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container mx-auto px-6 pt-20">
-        <h1 class="font-bold text-4xl pb-5">Pembayaran Pesanan</h1>
-        <p>Pesanan Anda ID: <?php echo htmlspecialchars($order['id']); ?></p>
+    <div class="container">
+        <h2 class="my-4">Ringkasan Pesanan</h2>
+        <div class="border p-4 mb-4">
+            <?php foreach ($cart_items as $item): ?>
+                <p><?php echo htmlspecialchars($item['product']['name']); ?> - Jumlah: <?php echo $item['quantity']; ?></p>
+            <?php endforeach; ?>
+ <p class="font-bold">Total: Rp <?php echo number_format($total_price, 2, ',', '.'); ?></p> <!-- Tambahkan total harga di sini -->        </div>
 
-        <!-- Form pembayaran -->
-        <form method="POST" action="process_payment.php">
-            <input type="hidden" name="order_id" value="<?php echo $order['id']; ?>" />
-            <input type="text" name="card_number" placeholder="Nomor Kartu" required class="mb-2 border-2 w-full p-2" />
-            <input type="text" name="expiry_date" placeholder="Tanggal Kadaluarsa (MM/YY)" required class="mb-2 border-2 w-full p-2" />
-            <input type="text" name="cvv" placeholder="CVV" required class="mb-2 border-2 w-full p-2" />
-            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Bayar</button>
+        <form action="process_payment.php" method="post">
+            <div class="mb-3">
+                <label for="payment_method" class="form-label">Metode Pembayaran</label>
+                <select id="payment_method" name="payment_method" class="form-select" required>
+                    <option value="credit_card">Kartu Kredit</option>
+                    <option value="bank_transfer">Transfer Bank</option>
+                    <option value="ewallet">E-Wallet</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Lanjutkan Pembayaran</button>
         </form>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
