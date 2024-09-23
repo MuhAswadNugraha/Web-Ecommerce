@@ -88,7 +88,7 @@ $total_price = array_sum(array_map(function ($item) {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <?php foreach ($cart_items as $item): ?>
                     <div class="border-2 border-black rounded-lg p-4">
-                        <img src="upload/<?php echo htmlspecialchars($item['product']['image']); ?>" alt="<?php echo htmlspecialchars($item['product']['name']); ?>" class="w-auto h-auto object-cover mb-4">
+                        <img src="upload/<?php echo htmlspecialchars($item['product']['image']); ?>" alt="<?php echo htmlspecialchars($item['product']['name']); ?>" class="w-96 h-96 m-auto object-cover mb-4">
                         <h3 class="text-lg font-semibold"><?php echo htmlspecialchars($item['product']['name']); ?></h3>
                         <p class="font-bold">Harga: Rp <?php echo number_format($item['product']['price'] * $item['quantity'], 2); ?></p>
                         <p>Jumlah: <?php echo $item['quantity']; ?></p>
@@ -99,12 +99,13 @@ $total_price = array_sum(array_map(function ($item) {
                         </div>
                     </div>
                 <?php endforeach; ?>
+                
             </div>
 
             <!-- Tampilkan total harga dan link ke checkout -->
             <div class="mt-4">
                 <p class="font-bold text-xl">Total: Rp <?php echo number_format($total_price, 2); ?></p>
-                <a href="checkout.php" class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded">Checkout</a>
+                <a href="payment.php" class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded">Checkout</a>
             </div>
         <?php endif; ?>
     </div>

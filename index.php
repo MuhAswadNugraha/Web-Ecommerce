@@ -30,8 +30,7 @@ try {
 ?>
 
 <main>
-    <div class="container mx-auto px-6 pt-20">
-        <img src="assets/image/bg-1.png" class="w-full pt-10" alt="Background Image">
+    <div class="container mx-auto px-6 pt-24">
         <div class="flex mt-2">
             <a href="#"><img src="assets/image/bg-2.png" style="width: 900px;" alt=""></a>
             <a href="#"><img src="assets/image/1.png" style="width: 185px;" alt=""></a>
@@ -138,22 +137,6 @@ try {
     <div class="w-1/4">
         <h3 class="text-lg font-bold">Tentang Kami</h3>
         <p class="text-justify">Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum recusandae repudiandae vero fugit laboriosam placeat enim commodi assumenda dolore eveniet.</p>
-    </div>
-    <div class="text-left">
-        <h3 class="text-center font-bold text-lg">Hubungi Kami</h3>
-        <form method="POST" action="contact.php">
-            <p><i class="fa-solid fa-user"></i> Nama Lengkap</p>
-            <input type="text" name="name" placeholder="Your Name" class="mb-2 px-2 border-2" required />
-            <p><i class="fa-solid fa-envelope"></i> Email</p>
-            <input type="email" name="email" placeholder="Your Email" class="mb-2 px-2 border-2" required />
-            <p><i class="fa-solid fa-phone"></i> Nomor Handphone</p>
-            <input type="text" name="phone" placeholder="Your Phone Number" class="mb-2 px-2 border-2" required />
-            <p><i class="fa-solid fa-comment"></i> Pesan</p>
-            <textarea name="message" required placeholder="Write your message here..." class="px-3 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300"></textarea>
-            <div class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 rounded-md transition text-center">
-                <button type="submit">Kirim</button>
-            </div>
-        </form>
     </div>
 </div>
 

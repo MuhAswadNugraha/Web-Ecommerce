@@ -34,10 +34,10 @@ if ($is_logged_in) {
             <img src="assets/image/ARAYA.png" alt="ARAYA Home Mart Logo" class="h-12">
         </div>
         <ul class="flex gap-7 items-center font-semibold text-lg">
-            <li><a href="index.php" class="menu">Ruang Keluarga<br />& Ruang Tamu</a></li>
-            <li><a href="kitchen.php" class="menu">Dapur</a></li>
-            <li><a href="bedroom.php" class="menu">Kamar Tidur</a></li>
-            <li><a href="bathroom.php" class="menu">Kamar Mandi</a></li>
+            <li><a href="keluarga.php" class="menu">Ruang Keluarga<br />& Ruang Tamu</a></li>
+            <li><a href="dapur.php" class="menu">Dapur</a></li>
+            <li><a href="tidur.php" class="menu">Kamar Tidur</a></li>
+            <li><a href="mandi.php" class="menu">Kamar Mandi</a></li>
         </ul>
         <form method="GET" action="search.php" class="">
             <div class="bg-white border-2 shadow relative rounded-xl px-2 flex items-center">
@@ -50,8 +50,8 @@ if ($is_logged_in) {
         </form>
         <ul class="flex gap-7 font-semibold text-lg">
             <li><a href="index.php" class="menu">Beranda</a></li>
-            <li><a href="products.php" class="menu">Product Kami</a></li>
-            <li><a href="about.php" class="menu">Tentang Kami</a></li>
+            <li><a href="" class="menu">Product Kami</a></li>
+            <li><a href="" class="menu">Tentang Kami</a></li>
         </ul>
         <div class="flex gap-10 items-center">
             <a href="cart.php" class="relative menu text-xl">

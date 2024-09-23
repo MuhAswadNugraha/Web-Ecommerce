@@ -4,7 +4,7 @@ include 'includes/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $payment_method = $_POST['payment_method'];
-    $order_id = $_SESSION['order_id'];
+    $order_id = $_SESSION['user_id'];
     $total_price = array_sum(array_map(function ($item) {
         return $item['product']['price'] * $item['quantity'];
     }, $_SESSION['cart']));
