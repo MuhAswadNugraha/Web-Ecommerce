@@ -31,7 +31,7 @@ if ($is_logged_in) {
 <body>
     <nav class="flex gap-10 items-center py-3 bg-yellow-400 justify-around text-sm px-5 fixed w-full shadow-2xl">
         <div class="logo">
-            <img src="assets/image/ARAYA.png" alt="ARAYA Home Mart Logo" class="h-12">
+            <img src="assets/image/ARAYA1.png" alt="ARAYA Home Mart Logo" class="h-12">
         </div>
         <ul class="flex gap-7 items-center font-semibold text-lg">
             <li><a href="keluarga.php" class="menu">Ruang Keluarga<br />& Ruang Tamu</a></li>
@@ -77,7 +77,7 @@ if ($is_logged_in) {
                     </a>
                 <?php else: ?>
                     <a href="login.php" class="px-5 py-1.5 font-bold border-2 border-red-500 text-red-500 rounded-xl hover:bg-red-500 hover:text-white">Masuk</a>
-                    <a href="register.php" class="px-5 py-1.5 bg-red-500 text-white font-bold border-2 border-red-500 rounded-xl hover:bg-white hover:text-red-500 transition-colors duration-300">Daftar</a>
+                    <a href="login.php" class="px-5 py-1.5 bg-red-500 text-white font-bold border-2 border-red-500 rounded-xl hover:bg-white hover:text-red-500 transition-colors duration-300">Daftar</a>
                 <?php endif; ?>
             </div>
         </div>

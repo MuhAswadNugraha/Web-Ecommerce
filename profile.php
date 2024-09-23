@@ -1,6 +1,6 @@
 <?php
-session_start();
 include 'includes/database.php';
+include 'includes/header.php';
 
 // Cek apakah pengguna sudah login
 if (!isset($_SESSION['user_id'])) {
@@ -65,8 +65,8 @@ $address = $stmt->fetch(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
-<body>
-    <div class="container mx-auto p-8">
+<body class="text-xl">
+    <div class="container mx-auto p-8 pt-12">
         <h1 class="text-3xl font-bold mb-5">Profile</h1>
 
         <?php if (isset($message)): ?>
@@ -79,43 +79,43 @@ $address = $stmt->fetch(PDO::FETCH_ASSOC);
             <div class="grid grid-cols-1 gap-6">
                 <!-- Full Name -->
                 <div>
-                    <label for="fullname" class="block text-lg font-medium">Full Name</label>
+                    <label for="fullname" class="block text-lg font-bold">Nama Lengkap</label>
                     <input type="text" name="fullname" id="fullname" value="<?php echo htmlspecialchars($user['fullname'] ?? ''); ?>" class="w-full px-4 py-2 border border-gray-300 rounded-md" required>
                 </div>
 
                 <!-- Date of Birth -->
                 <div>
-                    <label for="dob" class="block text-lg font-medium">Date of Birth</label>
+                    <label for="dob" class="block text-lg font-bold">Tempat/Tanggal/Lahir</label>
                     <input type="date" name="dob" id="dob" value="<?php echo htmlspecialchars($user['dob'] ?? ''); ?>" class="w-full px-4 py-2 border border-gray-300 rounded-md" required>
                 </div>
 
                 <!-- Phone Number -->
                 <div>
-                    <label for="phone" class="block text-lg font-medium">Phone Number</label>
+                    <label for="phone" class="block text-lg font-bold">Nomor HP</label>
                     <input type="text" name="phone" id="phone" value="<?php echo htmlspecialchars($user['phone'] ?? ''); ?>" class="w-full px-4 py-2 border border-gray-300 rounded-md" required>
                 </div>
 
                 <!-- Address Line -->
                 <div>
-                    <label for="address_line" class="block text-lg font-medium">Address</label>
+                    <label for="address_line" class="block text-lg font-bold">Alamat</label>
                     <textarea name="address_line" id="address_line" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-md" required><?php echo htmlspecialchars($address['address_line'] ?? ''); ?></textarea>
                 </div>
 
                 <!-- City -->
                 <div>
-                    <label for="city" class="block text-lg font-medium">City</label>
+                    <label for="city" class="block text-lg font-bold">Kota</label>
                     <input type="text" name="city" id="city" value="<?php echo htmlspecialchars($address['city'] ?? ''); ?>" class="w-full px-4 py-2 border border-gray-300 rounded-md" required>
                 </div>
 
                 <!-- Postal Code -->
                 <div>
-                    <label for="postal_code" class="block text-lg font-medium">Postal Code</label>
+                    <label for="postal_code" class="block text-lg font-bold">Kode Pos</label>
                     <input type="text" name="postal_code" id="postal_code" value="<?php echo htmlspecialchars($address['postal_code'] ?? ''); ?>" class="w-full px-4 py-2 border border-gray-300 rounded-md" required>
                 </div>
 
                 <!-- Country -->
                 <div>
-                    <label for="country" class="block text-lg font-medium">Country</label>
+                    <label for="country" class="block text-lg font-bold">Provinsi</label>
                     <input type="text" name="country" id="country" value="<?php echo htmlspecialchars($address['country'] ?? ''); ?>" class="w-full px-4 py-2 border border-gray-300 rounded-md" required>
                 </div>
 

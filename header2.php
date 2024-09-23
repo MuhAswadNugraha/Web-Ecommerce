@@ -28,8 +28,8 @@ if ($is_logged_in) {
 <body>
     <nav class="flex items-center bg-yellow-300 justify-around">
         <div class="flex gap-5 items-center py-2">
-            <img src="assets/image/ARAYA.png" alt="araya" class="w-40">
-            <p class="text-4xl">|</p>
+            <img src="assets/image/ARAYA1.png" alt="araya" class="w-40">
+            <p class="text-4xl font-bold mr-1">|</p>
             <h1 class="font-bold text-4xl 5">Checkout</h1>
         </div>
         <div class="flex gap-10 items-center">
