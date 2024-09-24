@@ -6,7 +6,7 @@ try {
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $tamuProducts = array_filter($products, function ($product) {
-        return $product['category_id'] == '1'; // Sesuaikan dengan ID kategori Dapur
+        return $product['category_id'] == '2'; // Sesuaikan dengan ID kategori Dapur
     });
     
 } catch (PDOException $e) {

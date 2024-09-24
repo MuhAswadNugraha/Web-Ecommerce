@@ -8,7 +8,7 @@ try {
     // Pisahkan produk berdasarkan kategori
 
     $mandiProducts = array_filter($products, function ($product) {
-        return $product['category_id'] == '3'; // Sesuaikan dengan ID kategori Dapur
+        return $product['category_id'] == '4'; // Sesuaikan dengan ID kategori Dapur
     });
 } catch (PDOException $e) {
     error_log('Failed to fetch products: ' . $e->getMessage());

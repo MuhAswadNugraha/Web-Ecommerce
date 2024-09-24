@@ -26,6 +26,17 @@ if ($is_logged_in) {
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .notification-dropdown {
+            display: none;
+            /* Awalnya disembunyikan */
+        }
+
+        .notification-dropdown.show {
+            display: block;
+            /* Ditampilkan ketika notifikasi aktif */
+        }
+    </style>
 </head>
 
 <body>
@@ -60,12 +71,26 @@ if ($is_logged_in) {
                     <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white text-xs rounded-full flex items-center justify-center"><?php echo htmlspecialchars($cart_count); ?></span>
                 <?php endif; ?>
             </a>
-            <a href="#" class="relative menu text-xl hover:text-red-500">
-                <i class="fa-solid fa-bell"></i>
-                <?php if ($notification_count > 0): ?>
-                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white text-xs rounded-full flex items-center justify-center"><?php echo htmlspecialchars($notification_count); ?></span>
-                <?php endif; ?>
-            </a>
+            <div class="relative">
+                <a href="./history.php" class="relative menu text-xl hover:text-red-500" id="bellIcon">
+                    <i class="fa-solid fa-bell"></i>
+                    <?php if ($notification_count > 0): ?>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white text-xs rounded-full flex items-center justify-center"><?php echo htmlspecialchars($notification_count); ?></span>
+                    <?php endif; ?>
+                </a>
+                <div class="notification-dropdown absolute top-16 right-5 bg-white shadow-lg rounded-lg w-64 hidden">
+                    <ul>
+                        <?php foreach ($notifications as $notification): ?>
+                            <li class="p-2 border-b">
+                                <?php echo htmlspecialchars($notification['message']); ?>
+                            </li>
+                        <?php endforeach; ?>
+                        <?php if ($notification_count === 0): ?>
+                            <li class="p-2 text-gray-500">Tidak ada notifikasi.</li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+            </div>
             <span>|</span>
             <div class="flex items-center space-x-4">
                 <?php if ($is_logged_in): ?>
@@ -82,6 +107,25 @@ if ($is_logged_in) {
             </div>
         </div>
     </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const bellIcon = document.getElementById('bellIcon');
+            const notificationDropdown = document.querySelector('.notification-dropdown');
+
+            bellIcon.addEventListener('click', function(event) {
+                event.preventDefault(); // Mencegah link default
+                notificationDropdown.classList.toggle('hidden'); // Toggle visibilitas dropdown
+            });
+
+            // Tambahkan klik di luar dropdown untuk menyembunyikan
+            document.addEventListener('click', function(event) {
+                if (!bellIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
+                    notificationDropdown.classList.add('hidden');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

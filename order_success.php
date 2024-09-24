@@ -10,14 +10,14 @@ if ($order_id) {
     $stmt->execute([$order_id]);
     $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$order) {
-        die("Pesanan tidak ditemukan. Silakan kembali ke beranda dan coba lagi.");
-    }
-
-    // Ambil detail barang yang dipesan
-    $stmt = $pdo->prepare("SELECT p.name AS product_name, oi.quantity, p.price, p.image FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?");
+    // Ambil total pembayaran dari tabel payments
+    $stmt = $pdo->prepare("SELECT amount FROM payments WHERE order_id = ?");
     $stmt->execute([$order_id]);
-    $order_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $payment = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$order || !$payment) {
+        die("Pesanan atau pembayaran tidak ditemukan.");
+    }
 } else {
     die("ID pesanan tidak valid.");
 }
@@ -37,6 +37,8 @@ if ($order_id) {
     <div class="container mx-auto px-6 pt-20">
         <h1 class="font-bold text-4xl pb-5">Pesanan Berhasil!</h1>
         <p class="text-lg">Terima kasih, <span class="font-bold"><?php echo htmlspecialchars($order['fullname']); ?></span>. Pesanan Anda telah berhasil diproses.</p>
+        <p class="text-lg">ID Pesanan: <?php echo htmlspecialchars($order_id); ?></p>
+        <p class="text-lg">Total Pembayaran: Rp <?php echo number_format($payment['amount'], 2, ',', '.'); ?></p>
         <a href="index.php" class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded">Kembali ke Beranda</a>
     </div>
 </body>

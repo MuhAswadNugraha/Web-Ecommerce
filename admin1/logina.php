@@ -16,8 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($admin && password_verify($password, $admin['password'])) {
+                // Set session variables
+                $_SESSION['loggedin'] = true;
                 $_SESSION['admin_id'] = $admin['id'];
                 $_SESSION['admin_name'] = $admin['name'];
+                $_SESSION['role'] = 'admin'; // Set the role
+
+                // Redirect to dashboard
                 header("Location: dashboard.php");
                 exit;
             } else {
@@ -27,22 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $error = "Email dan password harus diisi.";
         }
     } elseif ($_POST['action'] === 'register') {
-        $name = trim($_POST['name']);
-        $email = trim($_POST['email']);
-        $password = trim($_POST['password']);
-        $confirm_password = trim($_POST['confirm_password']);
-
-        if (!empty($name) && !empty($email) && !empty($password) && ($password === $confirm_password)) {
-            $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-            $stmt = $pdo->prepare("INSERT INTO admins (name, email, password) VALUES (?, ?, ?)");
-            $stmt->execute([$name, $email, $hashed_password]);
-
-            // Redirect to login after successful registration
-            header("Location: logina.php?success=1");
-            exit;
-        } else {
-            $error = "Semua kolom harus diisi dengan benar.";
-        }
+        // Registration logic
     }
 }
 ?>

@@ -1,5 +1,4 @@
 <?php
-session_start();
 include '../includes/database.php';
 include 'includes/header.php';
 
@@ -21,31 +20,36 @@ if (!$product) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['name'];
-    $description = $_POST['description'];
-    $price = $_POST['price'];
+    $name = trim($_POST['name']);
+    $description = trim($_POST['description']);
+    $price = floatval($_POST['price']);
 
-    // Update produk
-    $stmt = $pdo->prepare("UPDATE products SET name = ?, description = ?, price = ? WHERE id = ?");
-    $stmt->execute([$name, $description, $price, $product_id]);
+    // Validasi input
+    if (empty($name) || empty($description) || $price <= 0) {
+        echo "Semua kolom harus diisi dengan benar.";
+    } else {
+        // Update produk
+        $stmt = $pdo->prepare("UPDATE products SET name = ?, description = ?, price = ? WHERE id = ?");
+        $stmt->execute([$name, $description, $price, $product_id]);
 
-    // Jika ada gambar baru, proses upload gambar
-    if (!empty($_FILES['image']['name'])) {
-        $target_dir = "../upload/";
-        $target_file = $target_dir . basename($_FILES["image"]["name"]);
+        // Jika ada gambar baru, proses upload gambar
+        if (!empty($_FILES['image']['name'])) {
+            $target_dir = "../upload/";
+            $target_file = $target_dir . basename($_FILES["image"]["name"]);
 
-        // Upload gambar
-        if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-            // Update nama file gambar di database
-            $stmt = $pdo->prepare("UPDATE products SET image = ? WHERE id = ?");
-            $stmt->execute([$_FILES["image"]["name"], $product_id]);
-        } else {
-            echo "Gagal mengupload gambar.";
+            // Cek apakah file gambar dapat di upload
+            if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+                // Update nama file gambar di database
+                $stmt = $pdo->prepare("UPDATE products SET image = ? WHERE id = ?");
+                $stmt->execute([$_FILES["image"]["name"], $product_id]);
+            } else {
+                echo "Gagal mengupload gambar.";
+            }
         }
-    }
 
-    header('Location: dashboard.php');
-    exit;
+        header('Location: dashboard.php?message=Produk berhasil diperbarui');
+        exit;
+    }
 }
 ?>
 
@@ -61,5 +65,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
     </div>
 </main>
-
-<?php include 'includes/footer.php'; ?>

@@ -4,25 +4,47 @@ include 'includes/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $payment_method = $_POST['payment_method'];
-    $order_id = $_SESSION['user_id'];
-    $total_price = array_sum(array_map(function ($item) {
-        return $item['product']['price'] * $item['quantity'];
-    }, $_SESSION['cart']));
+    $user_id = $_SESSION['user_id'];
 
-    // Insert payment information into the database
+    // Check if cart is set and is an array
+    if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
+        die("Keranjang tidak ditemukan.");
+    }
+
+    // Calculate total price
+    $total_price = 0;
+    foreach ($_SESSION['cart'] as $product_id => $quantity) {
+        // Fetch product details
+        $stmt = $pdo->prepare("SELECT price FROM products WHERE id = ?");
+        $stmt->execute([$product_id]);
+        $product = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($product) {
+            $total_price += $product['price'] * $quantity;
+        }
+    }
+
+    // Create a new order
+    $stmt = $pdo->prepare("INSERT INTO orders (user_id,  status, created_at) VALUES (?, 'pending', NOW())");
+    if (!$stmt->execute([$user_id,])) {
+        die("Error creating order: " . implode(", ", $stmt->errorInfo()));
+    }
+    $order_id = $pdo->lastInsertId();
+
+    // Save payment information
     $stmt = $pdo->prepare("INSERT INTO payments (order_id, amount, payment_method, status, created_at) VALUES (?, ?, ?, 'pending', NOW())");
-    $stmt->execute([$order_id, $total_price, $payment_method]);
+    if (!$stmt->execute([$order_id, $total_price, $payment_method])) {
+        die("Error saving payment: " . implode(", ", $stmt->errorInfo()));
+    }
 
-    // Simulate payment success (update status later based on actual payment success/failure)
-    $payment_id = $pdo->lastInsertId();
-    $stmt = $pdo->prepare("UPDATE payments SET status = 'completed' WHERE id = ?");
-    $stmt->execute([$payment_id]);
+    // Notify user
+    $notification_stmt = $pdo->prepare("INSERT INTO notifications (user_id, message, created_at) VALUES (?, ?, NOW())");
+    $message = "Pembayaran untuk pesanan ID " . $order_id . " berhasil. Silakan berikan rating dan ulasan.";
+    $notification_stmt->execute([$user_id, $message]);
 
-    // Clear cart after successful payment
+    // Clear cart
     unset($_SESSION['cart']);
-    unset($_SESSION['order_id']);
 
-    // Redirect to order success page
+    // Redirect to success page
     header("Location: order_success.php?id=" . $order_id);
     exit;
 }

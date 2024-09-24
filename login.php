@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'includes/database.php';
+include 'includes/database.php'; // Koneksi ke database
 
 $error = '';
 
@@ -19,8 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
 
-            // Redirect to homepage or intended page
-            header("Location: index.php");
+            // Redirect to intended page or homepage
+            if (isset($_GET['redirect'])) {
+                header("Location: " . $_GET['redirect']);
+            } else {
+                header("Location: index.php");
+            }
             exit;
         } else {
             $error = "Email atau password salah.";
@@ -38,18 +42,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $confirm_password = trim($_POST['confirm_password']);
 
     if (!empty($name) && !empty($email) && !empty($password) && ($password === $confirm_password)) {
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-        $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-        $stmt->execute([$name, $email, $hashed_password]);
+        // Check if email already exists
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->execute([$email]);
 
-        // Redirect to login after successful registration
-        header("Location: login.php?success=1");
-        exit;
+        if ($stmt->rowCount() > 0) {
+            $error = "Email sudah terdaftar. Silakan gunakan email lain.";
+        } else {
+            $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+            $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
+            $stmt->execute([$name, $email, $hashed_password]);
+
+            // Redirect to login after successful registration
+            header("Location: login.php?success=1");
+            exit;
+        }
     } else {
         $error = "Semua kolom harus diisi dengan benar.";
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

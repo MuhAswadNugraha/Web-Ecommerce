@@ -22,14 +22,8 @@ $stmt = $pdo->prepare("SELECT address_line, city, postal_code, country FROM addr
 $stmt->execute([$user_id]);
 $address = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Cek apakah data profil lengkap
-if (!$user || empty($user['fullname']) || empty($user['phone']) || !$address || empty($address['address_line']) || empty($address['city']) || empty($address['postal_code']) || empty($address['country'])) {
-    header("Location: profile.php");
-    exit();
-}
-
 // Pastikan total harga dan item keranjang sudah ada di session
-if (!isset($_SESSION['cart'])) {
+if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
     die("Tidak ada pesanan yang ditemukan. Silakan kembali ke keranjang.");
 }
 
@@ -93,25 +87,14 @@ $total_price = 0;
                         <td class="border px-4 py-2 text-center">
                             <img src="upload/<?php echo htmlspecialchars($item['product']['image']); ?>" alt="<?php echo htmlspecialchars($item['product']['name']); ?>" class="w-20 h-20 m-auto object-cover">
                         </td>
-                        <td class="border px-4 py-2 text-center">
-                            <?php echo htmlspecialchars($item['product']['name']); ?>
-                        </td>
-                        <td class="border px-4 py-2 text-center">
-                            Rp <?php echo number_format($item['product']['price'], 2, ',', '.'); ?>
-                        </td>
-                        <td class="border px-4 py-2 text-center">
-                            <?php echo $item['quantity']; ?>
-                        </td>
-                        <td class="border px-4 py-2 text-center">
-                            Rp <?php echo number_format($subtotal, 2, ',', '.'); ?>
-                        </td>
+                        <td class="border px-4 py-2 text-center"><?php echo htmlspecialchars($item['product']['name']); ?></td>
+                        <td class="border px-4 py-2 text-center">Rp <?php echo number_format($item['product']['price'], 2, ',', '.'); ?></td>
+                        <td class="border px-4 py-2 text-center"><?php echo $item['quantity']; ?></td>
+                        <td class="border px-4 py-2 text-center">Rp <?php echo number_format($subtotal, 2, ',', '.'); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
-        <div class="flex my-5">
-            <img src="assets/image/voucher.png" alt="voucher" class="w-7"><span class="text-xl ml-2 font-bold">Voucher</span>
-        </div>
         <div class="mt-6 text-right">
             <span class="font-bold text-lg">Total Keseluruhan:</span>
             <p class="font-bold text-xl">Rp <?php echo number_format($total_price, 2, ',', '.'); ?></p>
@@ -130,10 +113,10 @@ $total_price = 0;
                 </select>
             </div>
 
+            <input type="hidden" name="cart_items" value="<?php echo htmlspecialchars(json_encode($_SESSION['cart'])); ?>">
+
             <a href="index.php" class="block w-full text-center bg-red-500 text-white font-bold py-2 rounded-md hover:bg-red-600 mb-3">Batalkan Pembayaran</a>
             <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600">Konfirmasi Pembayaran</button>
         </form>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
