@@ -1,4 +1,4 @@
-<?php       
+<?php
 include '../includes/database.php';
 include 'includes/header.php';
 
@@ -7,6 +7,18 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin') {
     header('Location: logina.php'); // Redirect to login page
     exit;
 }
+
+// Get total number of products
+$product_stmt = $pdo->query("SELECT COUNT(*) AS total FROM products");
+$product_count = $product_stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+// Get total number of orders
+$order_stmt = $pdo->query("SELECT COUNT(*) AS total FROM orders");
+$order_count = $order_stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+// Get total number of reviews (assuming there's a reviews table)
+$review_stmt = $pdo->query("SELECT COUNT(*) AS total FROM reviews");
+$review_count = $review_stmt->fetch(PDO::FETCH_ASSOC)['total'];
 ?>
 
 <div class="flex">
@@ -21,9 +33,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin') {
                     <p>Total Product</p>
                 </div>
                 <hr class="border-t-2 border-black">
-                <p class="py-16 text-center text-2xl font-bold">350</p>
+                <p class="py-16 text-center text-2xl font-bold"><?php echo $product_count; ?></p>
                 <hr class="border-t-2 border-black">
-                <a href="">
+                <a href="view_product.php">
                     <p class="items-center font-bold text-right pt-1 pr-2">More Info <span><i class="fa-solid fa-circle-right"></i></span></p>
                 </a>
             </div>
@@ -33,9 +45,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin') {
                     <p>Total Orders</p>
                 </div>
                 <hr class="border-t-2 border-black">
-                <p class="py-16 text-center text-2xl font-bold">20</p>
+                <p class="py-16 text-center text-2xl font-bold"><?php echo $order_count; ?></p>
                 <hr class="border-t-2 border-black">
-                <a href="">
+                <a href="view_orders.php">
                     <p class="items-center font-bold text-right pt-1 pr-2">More Info <span><i class="fa-solid fa-circle-right"></i></span></p>
                 </a>
             </div>
@@ -45,9 +57,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin') {
                     <p>Total Reviews</p>
                 </div>
                 <hr class="border-t-2 border-black">
-                <p class="py-16 text-center text-2xl font-bold">2</p>
+                <p class="py-16 text-center text-2xl font-bold"><?php echo $review_count; ?></p>
                 <hr class="border-t-2 border-black">
-                <a href="">
+                <a href="view_reviews.php">
                     <p class="items-center font-bold text-right pt-1 pr-2">More Info <span><i class="fa-solid fa-circle-right"></i></span></p>
                 </a>
             </div>

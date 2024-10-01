@@ -50,9 +50,9 @@
                 <tr class="border hover:bg-white">
                     <td class="pl-10 py-5"><a href=""><img src="../assets/image/reviews.png" alt=""></a></td>
                     <td>
-                        <a href="">
+                        <a href="./view_users.php">
                             <p class="text-2xl font-bold px-5">
-                                View Reviews
+                                View Users
                             </p>
                         </a>
                     </td>

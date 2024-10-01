@@ -1,4 +1,5 @@
 <?php
+ob_start(); // Start output buffering
 include 'includes/database.php'; // Include file untuk koneksi ke database
 include 'includes/header.php'; // Include header jika ada
 session_start();
@@ -99,7 +100,6 @@ $total_price = array_sum(array_map(function ($item) {
                         </div>
                     </div>
                 <?php endforeach; ?>
-                
             </div>
 
             <!-- Tampilkan total harga dan link ke checkout -->
@@ -112,3 +112,6 @@ $total_price = array_sum(array_map(function ($item) {
 </body>
 
 </html>
+
+<?php
+ob_end_flush(); // End output buffering

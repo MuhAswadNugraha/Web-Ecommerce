@@ -2,7 +2,8 @@
 session_start();
 include '../includes/database.php';
 
-$error = '';
+$message = ''; // Initialize message variable
+$messageType = ''; // Initialize message type
 
 // Handle login form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -16,23 +17,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($admin && password_verify($password, $admin['password'])) {
-                // Set session variables
                 $_SESSION['loggedin'] = true;
                 $_SESSION['admin_id'] = $admin['id'];
                 $_SESSION['admin_name'] = $admin['name'];
-                $_SESSION['role'] = 'admin'; // Set the role
+                $_SESSION['role'] = 'admin';
 
-                // Redirect to dashboard
                 header("Location: dashboard.php");
                 exit;
             } else {
-                $error = "Email atau password salah.";
+                $message = "Email atau password salah.";
+                $messageType = 'error'; // Set message type for error
             }
         } else {
-            $error = "Email dan password harus diisi.";
+            $message = "Email dan password harus diisi.";
+            $messageType = 'error'; // Set message type for error
         }
     } elseif ($_POST['action'] === 'register') {
-        // Registration logic
+        $name = trim($_POST['name']);
+        $email = trim($_POST['email']);
+        $password = trim($_POST['password']);
+        $confirm_password = trim($_POST['confirm_password']);
+
+        if (!empty($name) && !empty($email) && !empty($password) && !empty($confirm_password)) {
+            if ($password === $confirm_password) {
+                // Check if email already exists
+                $stmt = $pdo->prepare("SELECT * FROM admins WHERE email = ?");
+                $stmt->execute([$email]);
+
+                if ($stmt->rowCount() > 0) {
+                    $message = "Email sudah terdaftar. Silakan gunakan yang lain.";
+                    $messageType = 'error'; // Set message type for error
+                } else {
+                    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+                    // Insert new admin into the database
+                    $stmt = $pdo->prepare("INSERT INTO admins (name, email, password) VALUES (?, ?, ?)");
+                    if ($stmt->execute([$name, $email, $hashed_password])) {
+                        $message = "Registrasi berhasil! Silakan login.";
+                        $messageType = 'success'; // Set message type for success
+                    } else {
+                        $message = "Terjadi kesalahan saat mendaftar.";
+                        $messageType = 'error'; // Set message type for error
+                    }
+                }
+            } else {
+                $message = "Password dan konfirmasi password tidak cocok.";
+                $messageType = 'error'; // Set message type for error
+            }
+        } else {
+            $message = "Semua kolom harus diisi.";
+            $messageType = 'error'; // Set message type for error
+        }
     }
 }
 ?>
@@ -47,7 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.7.1/cdn.min.js" defer></script>
     <style>
-        /* Custom animations */
         .fade-in {
             animation: fadeIn 0.5s ease-out;
         }
@@ -68,7 +102,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div x-data="{ showLogin: true }" class="w-full max-w-md mx-auto p-6 bg-white rounded-lg shadow-xl fade-in">
-        <!-- Toggle between login and registration -->
         <div class="flex justify-center mb-6">
             <button @click="showLogin = true" class="px-4 py-2 w-1/2 text-center transition bg-gray-300 rounded-tl-lg"
                 :class="{ 'bg-blue-500 text-white': showLogin }">Login</button>
@@ -76,14 +109,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 :class="{ 'bg-blue-500 text-white': !showLogin }">Registrasi</button>
         </div>
 
-        <!-- Error message display -->
-        <?php if (!empty($error)): ?>
-            <div class="mb-4 p-2 bg-red-100 border border-red-400 text-red-700 rounded-lg fade-in">
-                <?php echo htmlspecialchars($error); ?>
+        <?php if (!empty($message)): ?>
+            <div class="mb-4 p-2 border rounded-lg fade-in <?php echo $messageType === 'error' ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700'; ?>">
+                <?php echo htmlspecialchars($message); ?>
             </div>
         <?php endif; ?>
 
-        <!-- Login form -->
         <div x-show="showLogin" x-cloak class="fade-in">
             <h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
             <form method="POST" action="logina.php" class="space-y-4">
@@ -100,7 +131,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             </form>
         </div>
 
-        <!-- Registration form -->
         <div x-show="!showLogin" x-cloak class="fade-in">
             <h2 class="text-2xl font-bold mb-4 text-center">Registrasi</h2>
             <form method="POST" action="logina.php" class="space-y-4">

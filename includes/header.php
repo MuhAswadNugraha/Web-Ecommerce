@@ -29,101 +29,106 @@ if ($is_logged_in) {
     <style>
         .notification-dropdown {
             display: none;
-            /* Awalnya disembunyikan */
         }
 
         .notification-dropdown.show {
             display: block;
-            /* Ditampilkan ketika notifikasi aktif */
+        }
+
+        /* Add transition for mobile menu */
+        #mobile-menu {
+            padding-top: 70px;
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+        }
+
+        /* Initially set max-height to 0 */
+        #mobile-menu.collapsed {
+            max-height: 0;
+        }
+
+        #mobile-menu.expanded {
+            max-height: 500px;
+            /* Arbitrarily large height */
         }
     </style>
 </head>
 
 <body>
-    <nav class="flex gap-10 items-center py-3 bg-yellow-400 justify-around text-sm px-5 fixed w-full shadow-2xl">
+    <nav class="flex flex-wrap items-center justify-between py-3 bg-yellow-400 fixed w-full shadow-2xl px-5">
         <div class="logo">
             <img src="assets/image/ARAYA1.png" alt="ARAYA Home Mart Logo" class="h-12">
         </div>
-        <ul class="flex gap-7 items-center font-semibold text-lg">
-            <li><a href="keluarga.php" class="menu">Ruang Keluarga<br />& Ruang Tamu</a></li>
-            <li><a href="dapur.php" class="menu">Dapur</a></li>
-            <li><a href="tidur.php" class="menu">Kamar Tidur</a></li>
-            <li><a href="mandi.php" class="menu">Kamar Mandi</a></li>
-        </ul>
-        <form method="GET" action="search.php" class="">
-            <div class="bg-white border-2 shadow relative rounded-xl px-2 flex items-center">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input name="query" id="title" class="border-white outline-none border-0 w-56 rounded-xl p-2" type="text" placeholder="Apa yang Anda cari?">
-                <button type="submit" class="bg-yellow-400 hover:bg-gray-700 rounded-xl text-black hover:text-white text-xl pl-4 pr-4 ml-2">
-                    <p class="font-semibold text-lg">Search</p>
-                </button>
-            </div>
-        </form>
-        <ul class="flex gap-7 font-semibold text-lg">
-            <li><a href="index.php" class="menu">Beranda</a></li>
-            <li><a href="" class="menu">Product Kami</a></li>
-            <li><a href="" class="menu">Tentang Kami</a></li>
-        </ul>
-        <div class="flex gap-10 items-center">
-            <a href="cart.php" class="relative menu text-xl">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <?php if ($cart_count > 0): ?>
-                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white text-xs rounded-full flex items-center justify-center"><?php echo htmlspecialchars($cart_count); ?></span>
-                <?php endif; ?>
-            </a>
-            <div class="relative">
-                <a href="./history.php" class="relative menu text-xl hover:text-red-500" id="bellIcon">
-                    <i class="fa-solid fa-bell"></i>
-                    <?php if ($notification_count > 0): ?>
-                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white text-xs rounded-full flex items-center justify-center"><?php echo htmlspecialchars($notification_count); ?></span>
+        <div class="block lg:hidden">
+            <button id="menu-toggle" class="text-gray-700 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+        <div class="hidden lg:flex lg:gap-7 lg:items-center font-semibold text-lg w-full lg:w-auto">
+            <ul class="flex flex-col lg:flex-row gap-7 items-center scroll-smoot">
+                <li><a href="keluarga.php" class="menu">Ruang Keluarga<br />& Ruang Tamu</a></li>
+                <li><a href="dapur.php" class="menu">Dapur</a></li>
+                <li><a href="tidur.php" class="menu">Kamar Tidur</a></li>
+                <li><a href="mandi.php" class="menu">Kamar Mandi</a></li>
+            </ul>
+            <form method="GET" action="search.php" class="mt-4 lg:mt-0">
+                <div class="bg-white border-2 shadow relative rounded-xl px-2 flex items-center">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input name="query" id="title" class="border-white outline-none border-0 w-56 rounded-xl p-2" type="text" placeholder="Apa yang Anda cari?">
+                    <button type="submit" class="bg-yellow-400 hover:bg-gray-700 rounded-xl text-black hover:text-white text-xl pl-4 pr-4 ml-2">
+                        <p class="font-semibold text-lg">Search</p>
+                    </button>
+                </div>
+            </form>
+            <ul class="flex flex-col lg:flex-row gap-7 items-center">
+                <li><a href="index.php" class="menu">Beranda</a></li>
+                <li><a href="#produk" class="menu">Product Kami</a></li>
+                <li><a href="#awalan" class="menu">Tentang Kami</a></li>
+            </ul>
+            <div class="flex gap-10 items-center">
+                <a href="cart.php" class="relative menu text-xl">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <?php if ($cart_count > 0): ?>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-600 text-white text-xs rounded-full flex items-center justify-center"><?php echo htmlspecialchars($cart_count); ?></span>
                     <?php endif; ?>
                 </a>
-                <div class="notification-dropdown absolute top-16 right-5 bg-white shadow-lg rounded-lg w-64 hidden">
-                    <ul>
-                        <?php foreach ($notifications as $notification): ?>
-                            <li class="p-2 border-b">
-                                <?php echo htmlspecialchars($notification['message']); ?>
-                            </li>
-                        <?php endforeach; ?>
-                        <?php if ($notification_count === 0): ?>
-                            <li class="p-2 text-gray-500">Tidak ada notifikasi.</li>
-                        <?php endif; ?>
-                    </ul>
+                <span>|</span>
+                <div class="flex items-center space-x-4">
+                    <?php if ($is_logged_in): ?>
+                        <a href="profile.php" class="flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+                            <i class="fa-solid fa-user mr-2"></i>Profile
+                        </a>
+                        <a href="logout.php" class="px-5 py-1.5 bg-red-500 text-white font-bold border-2 border-red-500 rounded-xl hover:bg-white hover:text-red-500 transition-colors duration-300">
+                            Logout
+                        </a>
+                    <?php else: ?>
+                        <a href="login.php" class="px-5 py-1.5 font-bold border-2 border-red-500 text-red-500 rounded-xl hover:bg-red-500 hover:text-white">Masuk</a>
+                        <a href="login.php" class="px-5 py-1.5 bg-red-500 text-white font-bold border-2 border-red-500 rounded-xl hover:bg-white hover:text-red-500 transition-colors duration-300">Daftar</a>
+                    <?php endif; ?>
                 </div>
-            </div>
-            <span>|</span>
-            <div class="flex items-center space-x-4">
-                <?php if ($is_logged_in): ?>
-                    <a href="profile.php" class="flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
-                        <i class="fa-solid fa-user mr-2"></i>Profile
-                    </a>
-                    <a href="logout.php" class="px-5 py-1.5 bg-red-500 text-white font-bold border-2 border-red-500 rounded-xl hover:bg-white hover:text-red-500 transition-colors duration-300">
-                        Logout
-                    </a>
-                <?php else: ?>
-                    <a href="login.php" class="px-5 py-1.5 font-bold border-2 border-red-500 text-red-500 rounded-xl hover:bg-red-500 hover:text-white">Masuk</a>
-                    <a href="login.php" class="px-5 py-1.5 bg-red-500 text-white font-bold border-2 border-red-500 rounded-xl hover:bg-white hover:text-red-500 transition-colors duration-300">Daftar</a>
-                <?php endif; ?>
             </div>
         </div>
     </nav>
 
+    <div id="mobile-menu" class="collapsed lg:hidden bg-yellow-400">
+        <div class="flex flex-col p-5">
+            <ul class="flex flex-col gap-4">
+                <li><a href="keluarga.php" class="menu">Ruang Keluarga<br />& Ruang Tamu</a></li>
+                <li><a href="dapur.php" class="menu">Dapur</a></li>
+                <li><a href="tidur.php" class="menu">Kamar Tidur</a></li>
+                <li><a href="mandi.php" class="menu">Kamar Mandi</a></li>
+                <li><a href="index.php" class="menu">Beranda</a></li>
+                <li><a href="" class="menu">Product Kami</a></li>
+                <li><a href="#awalan" class="menu">Tentang Kami</a></li>
+            </ul>
+        </div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const bellIcon = document.getElementById('bellIcon');
-            const notificationDropdown = document.querySelector('.notification-dropdown');
-
-            bellIcon.addEventListener('click', function(event) {
-                event.preventDefault(); // Mencegah link default
-                notificationDropdown.classList.toggle('hidden'); // Toggle visibilitas dropdown
-            });
-
-            // Tambahkan klik di luar dropdown untuk menyembunyikan
-            document.addEventListener('click', function(event) {
-                if (!bellIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
-                    notificationDropdown.classList.add('hidden');
-                }
-            });
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('collapsed');
+            mobileMenu.classList.toggle('expanded');
         });
     </script>
 </body>

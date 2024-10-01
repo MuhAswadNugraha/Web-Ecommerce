@@ -8,7 +8,6 @@ try {
     $tamuProducts = array_filter($products, function ($product) {
         return $product['category_id'] == '2'; // Sesuaikan dengan ID kategori Dapur
     });
-    
 } catch (PDOException $e) {
     error_log('Failed to fetch products: ' . $e->getMessage());
     $tamuProducts = [];
@@ -20,10 +19,10 @@ try {
     <div class="container mx-auto px-6 pt-20">
         <img src="assets/image/bg-1.png" class="w-full pt-10" alt="Background Image">
         <div class="flex mt-2">
-            <a href="#"><img src="assets/image/bg-2.png" style="width: 900px;" alt=""></a>
-            <a href="#"><img src="assets/image/1.png" style="width: 185px;" alt=""></a>
-            <a href="#"><img src="assets/image/2.png" style="width: 265px;" alt=""></a>
-            <a href="#"><img src="assets/image/3.png" style="width: 220px;" alt=""></a>
+            <a href="claim_voucher.php"><img src="assets/image/bg-2.png" style="width: 900px;" alt=""></a>
+            <a href="claim_voucher.php"><img src="assets/image/1.png" style="width: 185px;" alt=""></a>
+            <a href="claim_voucher.php"><img src="assets/image/2.png" style="width: 265px;" alt=""></a>
+            <a href="claim_voucher.php"><img src="assets/image/3.png" style="width: 220px;" alt=""></a>
         </div>
 
         <h1 class="font-bold text-4xl pb-5 pt-4">Ruang Keluarga & Ruang Tamu</h1>
@@ -51,15 +50,5 @@ try {
     </div>
 </main>
 
-<div class="flex justify-around border-2 mx-32 my-10 rounded-3xl text-center pt-5 pb-10 bg-gray-300">
-    <div class="w-1/4">
-        <h3 class="text-lg font-bold">Kenapa Memilih Kami?</h3>
-        <p class="text-justify">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint quia, voluptates dolorum molestias nostrum ratione animi suscipit necessitatibus fugit ad.</p>
-    </div>
-    <div class="w-1/4">
-        <h3 class="text-lg font-bold">Tentang Kami</h3>
-        <p class="text-justify">Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum recusandae repudiandae vero fugit laboriosam placeat enim commodi assumenda dolore eveniet.</p>
-    </div>
-</div>
 
 <?php include 'includes/footer.php'; ?>
