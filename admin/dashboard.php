@@ -1,65 +1,71 @@
 <?php
-session_start();
 include '../includes/database.php';
-include 'includes/sidebar.php';
+include 'includes/header.php';
 
-try {
-    // Update query untuk melakukan join dengan tabel categories
-    $stmt = $pdo->query("
-        SELECT p.*, c.name AS category_name 
-        FROM products p 
-        JOIN categories c ON p.category_id = c.id
-    ");
-    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    error_log('Failed to fetch products: ' . $e->getMessage());
-    $products = [];
+// Check if the user is logged in and is an admin
+if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin') {
+    header('Location: logina.php'); // Redirect to login page
+    exit;
 }
+
+// Get total number of products
+$product_stmt = $pdo->query("SELECT COUNT(*) AS total FROM products");
+$product_count = $product_stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+// Get total number of orders
+$order_stmt = $pdo->query("SELECT COUNT(*) AS total FROM orders");
+$order_count = $order_stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+// Get total number of userss (assuming there's a userss table)
+$users_stmt = $pdo->query("SELECT COUNT(*) AS total FROM users");
+$users_count = $users_stmt->fetch(PDO::FETCH_ASSOC)['total'];
 ?>
 
-<div class="container mx-auto px-6 pt-20 w-4/5">
-    <h1 class="font-bold text-4xl pb-5">Dashboard Admin</h1>
-    <table class="min-w-full border-collapse">
-        <thead>
-            <tr>
-                <th class="border">ID</th>
-                <th class="border">Nama Produk</th>
-                <th class="border">Deskripsi Produk</th>
-                <th class="border">Kategori Produk</th>
-                <th class="border">Harga</th>
-                <th class="border">Gambar Produk</th>
-                <th class="border">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($products as $product): ?>
-                <tr class="text-center">
-                    <td class="border"><?php echo $product['id']; ?></td>
-                    <td class="border"><?php echo htmlspecialchars($product['name']); ?></td>
-                    <td class="border"><?php echo htmlspecialchars($product['description']); ?></td>
-                    <td class="border"><?php echo htmlspecialchars($product['category_name']); ?></td> <!-- Ganti category_id dengan category_name -->
-                    <td class="border">Rp <?php echo number_format($product['price'], 2); ?></td>
-                    <td class="border">
-                        <?php if (!empty($product['image']) && file_exists('../upload/' . $product['image'])): ?>
-                            <img src="../upload/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="w-40 h-40 my-5 object-cover m-auto">
-                        <?php else: ?>
-                            <img src="../assets/image/default-product.png" alt="Default Image" class="w-16 h-16 object-cover">
-                        <?php endif; ?>
-                    </td>
-                    <td class="border">
-                        <div class="flex gap-2 justify-center">
-                            <a href="view_product.php?id=<?php echo $product['id']; ?>" class="bg-green-500 text-white px-2 py-1 rounded">Lihat</a>
-                            <a href="edit_product.php?id=<?php echo $product['id']; ?>" class="bg-blue-500 text-white px-2 py-1 rounded">Edit</a>
-                            <a href="delete_product.php?id=<?php echo $product['id']; ?>" class="bg-red-500 text-white px-2 py-1 rounded" onclick="return confirm('Anda yakin ingin menghapus produk ini?')">Hapus</a>
-                        </div>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-    <a href="add_product.php" class="text-blue-500">Add New Product</a>
+<div class="flex">
+    <div class="min-h-screen bg-gray-100 w-96">
+        <?php include 'includes/sidebar.php'; ?>
+    </div>
+    <div class="container mx-auto px-6 pt-20 w-4/5">
+        <div class="flex justify-around">
+            <div class="bg-blue-300 rounded-lg">
+                <div class="flex items-center gap-5 font-bold text-xl p-2 pl-10 pr-20">
+                    <img src="../assets/image/produk.png" alt="">
+                    <p>Total Product</p>
+                </div>
+                <hr class="border-t-2 border-black">
+                <p class="py-16 text-center text-2xl font-bold"><?php echo $product_count; ?></p>
+                <hr class="border-t-2 border-black">
+                <a href="view_product.php">
+                    <p class="items-center font-bold text-right pt-1 pr-2">More Info <span><i class="fa-solid fa-circle-right"></i></span></p>
+                </a>
+            </div>
+            <div class="bg-green-200 rounded-lg">
+                <div class="flex items-center gap-5 font-bold text-xl p-2 pl-10 pr-20">
+                    <img src="../assets/image/orde.png" alt="">
+                    <p>Total Orders</p>
+                </div>
+                <hr class="border-t-2 border-black">
+                <p class="py-16 text-center text-2xl font-bold"><?php echo $order_count; ?></p>
+                <hr class="border-t-2 border-black">
+                <a href="view_orders.php">
+                    <p class="items-center font-bold text-right pt-1 pr-2">More Info <span><i class="fa-solid fa-circle-right"></i></span></p>
+                </a>
+            </div>
+            <div class="bg-blue-300 rounded-lg">
+                <div class="flex items-center gap-5 font-bold text-xl p-2 pl-10 pr-20">
+                    <img src="../assets/image/users.png" alt="">
+                    <p>Total User</p>
+                </div>
+                <hr class="border-t-2 border-black">
+                <p class="py-16 text-center text-2xl font-bold"><?php echo $users_count; ?></p>
+                <hr class="border-t-2 border-black">
+                <a href="view_users.php">
+                    <p class="items-center font-bold text-right pt-1 pr-2">More Info <span><i class="fa-solid fa-circle-right"></i></span></p>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
-
 </body>
 
 </html>

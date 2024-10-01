@@ -1,31 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="flex">
-    <div class="sidebar w-1/5 bg-yellow-300 min-h-screen text-center shadow-lg">
-        <img src="../assets/image/ARAYA.png" alt="Logo" class="w-full rounded-b-sm p-10 bg-yellow-500 mb-5">
-        <ul class="space-y-6 text-lg font-bold">
-            <li>
-                <a href="#" class="block  text-lg mx-1 py-3 rounded-full  hover:bg-blue-500 hover:text-white transition duration-200">Manage Categories</a>
-            </li>
-            <li>
-                <a href="#" class="block  text-lg mx-1 py-3 rounded-full  hover:bg-blue-500 hover:text-white transition duration-200">Manage Products</a>
-            </li>
-            <li>
-                <a href="#" class="block  text-lg mx-1 py-3 rounded-full  hover:bg-blue-500 hover:text-white transition duration-200">View Orders</a>
-            </li>
-            <li>
-                <a href="#" class="block  text-lg mx-1 py-3 rounded-full  hover:bg-blue-500 hover:text-white transition duration-200">View Users</a>
-            </li>
-            <li>
-                <a href="#" class="block  text-lg mx-1 py-3 rounded-full  hover:bg-blue-500 hover:text-white transition duration-200">View Reviews</a>
-            </li>
-        </ul>
-    </div>
+<body>
+    <sidebar class="min-h-vh m-10">
+        <a href="./dashboard.php">
+            <div class="flex bg-gray-300 m-5 p-3 items-center justify-center">
+                <img src="../assets/image/dashboard.png" alt="">
+                <p class="ml-7 text-2xl font-bold">Dashboard Admin</p>
+            </div>
+        </a>
+        <table class="ml-5 items-center">
+            <tbody>
+                <tr class="border hover:bg-white">
+                    <td class="pl-10 py-5"><a href=""><img src="../assets/image/categori.png" alt=""></a></td>
+                    <td>
+                        <a href="./view_category.php">
+                            <p class="text-2xl font-bold px-5">Categories</p>
+                        </a>
+                    </td>
+                </tr>
+                <tr class="border hover:bg-white">
+                    <td class="pl-10 py-5"><a href=""><img src="../assets/image/produk.png" alt=""></a></td>
+                    <td>
+                        <a href="./view_product.php">
+                            <p class="text-2xl font-bold px-5">
+                                Product
+                            </p>
+                        </a>
+                    </td>
+                </tr>
+                <tr class="border hover:bg-white">
+                    <td class="pl-10 py-5"><a href=""><img src="../assets/image/orde.png" alt=""></a></td>
+                    <td>
+                        <a href="./view_orders.php">
+                            <p class="text-2xl font-bold px-5">
+                                View Orders
+                            </p>
+                        </a>
+                    </td>
+                </tr>
+                <tr class="border hover:bg-white">
+                    <td class="pl-10 py-5"><a href=""><img src="../assets/image/reviews.png" alt=""></a></td>
+                    <td>
+                        <a href="./view_users.php">
+                            <p class="text-2xl font-bold px-5">
+                                View Users
+                            </p>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </sidebar>
+</body>
+
+</html>
